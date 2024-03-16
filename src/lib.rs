@@ -1,3 +1,5 @@
+uniffi::include_scaffolding!("example"); // "example" is the name of the .udl file
+
 use ark_bn254::fr::Fr as Fr_bn254;
 use ark_ff::{BigInteger, PrimeField};
 use babyjubjub_ark::{Fr, PrivateKey};
@@ -137,9 +139,3 @@ mod tests {
         println!("Public Key: {:?}", pubk.x.0.to_string());
     }
 }
-
-// This function should be launchable form SWIFT
-pub fn add_rust(left: i32, right: i32) -> i32 {
-    left + right
-}
-
