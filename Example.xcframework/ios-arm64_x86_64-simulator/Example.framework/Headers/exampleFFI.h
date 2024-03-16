@@ -51,7 +51,13 @@ typedef struct RustCallStatus {
 typedef void (*UniFfiRustFutureContinuation)(void * _Nonnull, int8_t);
 
 // Scaffolding functions
-RustBuffer uniffi_example_fn_func_hash_embedding(RustBuffer embedding, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_example_fn_func_decrypt(RustBuffer prk, RustBuffer pbk, RustBuffer enc, RustCallStatus *_Nonnull out_status
+);
+RustBuffer uniffi_example_fn_func_encrypt(RustBuffer prk, RustBuffer pbk, RustBuffer message, RustCallStatus *_Nonnull out_status
+);
+RustBuffer uniffi_example_fn_func_ext_generate_pubkey(RustBuffer signed_bytes, RustCallStatus *_Nonnull out_status
+);
+RustBuffer uniffi_example_fn_func_ext_sign_pubkey(RustBuffer to_sign, RustBuffer prk, RustCallStatus *_Nonnull out_status
 );
 RustBuffer ffi_example_rustbuffer_alloc(int32_t size, RustCallStatus *_Nonnull out_status
 );
@@ -165,7 +171,16 @@ void ffi_example_rust_future_free_void(void* _Nonnull handle
 );
 void ffi_example_rust_future_complete_void(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
 );
-uint16_t uniffi_example_checksum_func_hash_embedding(void
+uint16_t uniffi_example_checksum_func_decrypt(void
+    
+);
+uint16_t uniffi_example_checksum_func_encrypt(void
+    
+);
+uint16_t uniffi_example_checksum_func_ext_generate_pubkey(void
+    
+);
+uint16_t uniffi_example_checksum_func_ext_sign_pubkey(void
     
 );
 uint32_t ffi_example_uniffi_contract_version(void
