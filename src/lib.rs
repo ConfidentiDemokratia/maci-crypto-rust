@@ -116,6 +116,14 @@ mod tests {
     }
 
     #[test]
+    fn test_hash_embedding() {
+        let embedding = vec![0u8; 100];
+        let hash = hash_embedding(embedding);
+        assert_eq!(hash.len(), 32);
+        println!("Hash: {:?}", hash)
+    }
+
+    #[test]
     fn test_convert_fr_to_bytes32() {
         let pk = PrivateKey {
             key: [0; 32]
