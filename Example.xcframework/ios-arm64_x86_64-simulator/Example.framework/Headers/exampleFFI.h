@@ -51,10 +51,7 @@ typedef struct RustCallStatus {
 typedef void (*UniFfiRustFutureContinuation)(void * _Nonnull, int8_t);
 
 // Scaffolding functions
-uint32_t uniffi_example_fn_func_add(uint32_t a, uint32_t b, RustCallStatus *_Nonnull out_status
-);
-RustBuffer uniffi_example_fn_func_hello(RustCallStatus *_Nonnull out_status
-    
+RustBuffer uniffi_example_fn_func_ext_generate_pubkey(RustBuffer raw_sign, RustCallStatus *_Nonnull out_status
 );
 RustBuffer ffi_example_rustbuffer_alloc(int32_t size, RustCallStatus *_Nonnull out_status
 );
@@ -168,10 +165,7 @@ void ffi_example_rust_future_free_void(void* _Nonnull handle
 );
 void ffi_example_rust_future_complete_void(void* _Nonnull handle, RustCallStatus *_Nonnull out_status
 );
-uint16_t uniffi_example_checksum_func_add(void
-    
-);
-uint16_t uniffi_example_checksum_func_hello(void
+uint16_t uniffi_example_checksum_func_ext_generate_pubkey(void
     
 );
 uint32_t ffi_example_uniffi_contract_version(void
