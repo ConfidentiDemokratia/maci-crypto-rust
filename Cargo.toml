@@ -6,3 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+poseidon-ark = { git = "https://github.com/arnaucube/poseidon-ark" }
+babyjubjub-ark = { git = "https://github.com/arnaucube/babyjubjub-ark", features = ["aarch64"], rev = "dbf79c5" }
+sha3 = "0.10.8"
+

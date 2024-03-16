@@ -1,3 +1,5 @@
+mod crypto;
+
 // This function should be launchable form SWIFT
 pub fn add_rust(left: i32, right: i32) -> i32 {
     left + right
