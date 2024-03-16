@@ -8,11 +8,12 @@ use sha3::{Digest, Sha3_256};
 
 uniffi::include_scaffolding!("example"); // "example" is the name of the .udl file
 
-pub fn ext_generate_pubkey(signed_bytes: Vec<u8>) -> Vec<u8> {
-    let res = generate_pubkey(signed_bytes);
+pub fn ext_generate_keys(signed_bytes: Vec<u8>) -> Vec<u8> {
+    let (prk, pbk) = generate_keys(signed_bytes);
     let mut result = Vec::new();
-    result.extend_from_slice(&res.0);
-    result.extend_from_slice(&res.1);
+    result.extend_from_slice(&prk);
+    result.extend_from_slice(&pbk.0);
+    result.extend_from_slice(&pbk.1);
     result
 }
 
@@ -193,7 +194,7 @@ fn sign_pubkey(to_sign: Vec<u8>, prk: Vec<u8>) -> Signature {
 /// Function takes the raw users signature over the message "MACI"
 /// And returns a corresponding BabyJubJub public key
 /// Which is obtained by hashing the signature and converting it to a field element
-pub fn generate_pubkey(raw_sign: Vec<u8>) -> ([u8; 32], [u8; 32]) {
+pub fn generate_keys(raw_sign: Vec<u8>) -> ([u8; 32], ([u8; 32], [u8; 32])) {
 
     // Use SHA256 hash function to hash the signature bytes
     let mut hasher = Sha3_256::new();
@@ -216,7 +217,7 @@ pub fn generate_pubkey(raw_sign: Vec<u8>) -> ([u8; 32], [u8; 32]) {
 
     /// Serialise -
     /// TODO - check this is consisent with TS Version, that is that the public key is of the same format in both
-    return (convert_big_int_to_bytes32(x.0), convert_big_int_to_bytes32(y.0));
+    return (convert_big_int_to_bytes32(priv_key.scalar_key().into_bigint()), (convert_big_int_to_bytes32(x.0), convert_big_int_to_bytes32(y.0)));
 }
 
 pub fn hash_embedding(embedding: Vec<u8>) -> Vec<u8> {
@@ -282,16 +283,7 @@ mod tests {
     #[test]
     fn test_generate_pubkey() {
         let raw_sign = vec![0u8; 100];
-        let (x, y) = generate_pubkey(raw_sign);
-        assert_eq!(x.len(), 32);
-        assert_eq!(y.len(), 32);
-        println!("Public Key: {:?}, {:?}", x, y)
-    }
-
-    #[test]
-    fn test_generate_pubkey() {
-        let raw_sign = vec![0u8; 100];
-        let (x, y) = generate_pubkey(raw_sign);
+        let (prk, (x, y)) = generate_keys(raw_sign);
         assert_eq!(x.len(), 32);
         assert_eq!(y.len(), 32);
         println!("Public Key: {:?}, {:?}", x, y)
