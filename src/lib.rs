@@ -1,6 +1,8 @@
 use ark_bn254::fr::Fr as Fr_bn254;
 use ark_ff::{BigInt, BigInteger, PrimeField};
-use babyjubjub_ark::{PrivateKey, Signature};
+use babyjubjub_ark::{Point, PrivateKey, Signature};
+use dusk_jubjub::{BlsScalar, Fq, JubJubAffine};
+use dusk_poseidon::PoseidonCipher;
 use poseidon_ark::Poseidon;
 use sha3::{Digest, Sha3_256};
 
@@ -10,6 +12,87 @@ pub fn ext_generate_pubkey(raw_sign: Vec<u8>) -> Vec<u8> {
     result.extend_from_slice(&res.0);
     result.extend_from_slice(&res.1);
     result
+}
+
+fn gen_dh_keypair(prk: Vec<u8>, pbk: Vec<u8>) -> Point {
+
+    // Extract private key from bytes
+    let priv_key = PrivateKey::import(prk).unwrap();
+
+    // Extract public key from bytes
+    // First, split the public key into x and y
+    // Check if the size of the public key is correct
+    if pbk.len() != 64 {
+        panic!("Public key is not of the correct size");
+    }
+    let x_bytes = &pbk[0..32];
+    let y_bytes = &pbk[32..64];
+    let x = Fr_bn254::from_be_bytes_mod_order(x_bytes);
+    let y = Fr_bn254::from_be_bytes_mod_order(y_bytes);
+    let pub_key = Point {
+        x,
+        y,
+    };
+
+    // Generate the shared secret
+    let shared_secret = pub_key.mul_scalar(&priv_key.scalar_key());
+
+
+    // Return the shared secret
+    shared_secret
+}
+
+
+/// External function to be used by SWIFT
+/// TODO - confirm that the function is consistent with the TS version
+/// TODO - confirm the correct integration between two ARK versions
+/// TODO - move all code to the same ARK version - DUSK
+/// Encrypts a message using the Poseidon Cipher
+pub fn encrypt(prk: Vec<u8>, pbk: Vec<u8>, message: Vec<u8>) -> Vec<u8> {
+
+    // Generate the shared secret
+    let shared_secret = gen_dh_keypair(prk, pbk);
+    let x_bytes = shared_secret.x.into_bigint().to_bytes_be();
+    let y_bytes = shared_secret.y.into_bigint().to_bytes_be();
+
+    let prepped_shared_secret = JubJubAffine::from_raw_unchecked(
+        Fq::from_bytes(<&[u8; 32]>::try_from(&*x_bytes).unwrap()).unwrap(),
+        Fq::from_bytes(<&[u8; 32]>::try_from(&*y_bytes).unwrap()).unwrap(),
+    );
+
+    // Generate a random nonce that will be public
+    let nonce = BlsScalar::from(0);
+
+    // Convert the message to a series of field elements
+    let mut prepped_message = Vec::new();
+    for i in (0..message.len()).step_by(32) {
+        let f = if i + 32 <= message.len() {
+            // Extract 8 bytes
+            let slice = &message[i..i + 32];
+
+            BlsScalar::from_bytes(<&[u8; 32]>::try_from(slice).unwrap())
+        } else {
+            // Extract the remaining bytes
+            let slice = &message[i..];
+
+            // Extend the slice to 32 bytes
+            let mut extended_slice = Vec::new();
+            extended_slice.extend_from_slice(slice);
+            extended_slice.extend_from_slice(&vec![0u8; 32 - slice.len()]);
+            BlsScalar::from_bytes(<&[u8; 32]>::try_from(extended_slice.as_slice()).unwrap())
+        };
+
+        prepped_message.push(f.unwrap());
+    }
+
+    // Encrypt the message
+    let cipher = PoseidonCipher::encrypt(&prepped_message, &prepped_shared_secret, &nonce);
+
+
+    // Get the output of the cipher
+    let enc_bytes = cipher.cipher().to_vec().iter().map(|x| x.to_bytes()).flatten().collect();
+
+    enc_bytes
 }
 
 /// External function to be used by SWIFT
