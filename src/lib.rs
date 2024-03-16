@@ -95,8 +95,8 @@ pub fn hash_bytes(embedding: Vec<u8>) -> ark_bn254::Fr {
 
     // Turn bytes into a set of field elements
     let p_bytes = b"21888242871839275222246405745257275088548364400416034343698204186575808495617";
-    let p = Fr_bn254::from_le_bytes_mod_order(p_bytes);
 
+    // TODO - make this function consistent with the TS version
     let mut vec_f = Vec::new();
 
     for i in (0..embedding.len()).step_by(8) {
