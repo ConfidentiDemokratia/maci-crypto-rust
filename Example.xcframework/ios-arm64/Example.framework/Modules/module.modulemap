@@ -1,0 +1,6 @@
+framework module Example {
+  umbrella header "ExampleFFI.h"
+
+  export *
+  module * { export * }
+}
