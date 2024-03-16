@@ -41,8 +41,15 @@ pub fn generate_pubkey(raw_sign: Vec<u8>) -> ([u8; 32], [u8; 32]) {
     return (convert_u64_to_bytes32(x.0.0), convert_u64_to_bytes32(y.0.0));
 }
 
-/// Functiont that takes a embedding as bytes and returns a Poseidon hash of the embedding
 pub fn hash_embedding(embedding: Vec<u8>) -> Vec<u8> {
+    let hash_f = hash_bytes(embedding);
+
+    // Return the hash
+    return hash_f.into_bigint().to_bytes_be();
+}
+
+/// Functiont that takes a embedding as bytes and returns a Poseidon hash of the embedding
+pub fn hash_bytes(embedding: Vec<u8>) -> ark_bn254::Fr {
 
     // Create a new Poseidon instance
     let poseidon = Poseidon::new();
@@ -55,7 +62,7 @@ pub fn hash_embedding(embedding: Vec<u8>) -> Vec<u8> {
 
     // Turn bytes into a set of field elements
     let p_bytes = b"21888242871839275222246405745257275088548364400416034343698204186575808495617";
-    let p = Fr::from_le_bytes_mod_order(p_bytes);
+    let p = Fr_bn254::from_le_bytes_mod_order(p_bytes);
 
     let mut vec_f = Vec::new();
 
@@ -77,10 +84,7 @@ pub fn hash_embedding(embedding: Vec<u8>) -> Vec<u8> {
 
 
     // Hash the embedding
-    let hash = poseidon.hash(vec_f).unwrap();
-
-    // Return the hash
-    return hash.into_bigint().to_bytes_be();
+    poseidon.hash(vec_f).unwrap()
 }
 
 
