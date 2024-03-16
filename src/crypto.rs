@@ -1,10 +1,20 @@
-use babyjubjub_ark::PrivateKey;
+use ark_ff::{BigInt, BigInteger, PrimeField};
+use babyjubjub_ark::{Fr, PrivateKey};
+use poseidon_ark::Poseidon;
 use sha3::{Digest, Sha3_256};
+
+pub fn ext_generate_pubkey(raw_sign: Vec<u8>) -> Vec<u8> {
+    let res = generate_pubkey(raw_sign);
+    let mut result = Vec::new();
+    result.extend_from_slice(&res.0);
+    result.extend_from_slice(&res.1);
+    result
+}
 
 /// Function takes the raw users signature over the message "MACI"
 /// And returns a corresponding BabyJubJub public key
 /// Which is obtained by hashing the signature and converting it to a field element
-pub fn generate_pubkey(raw_sign: [u8; 100]) -> ([u8; 32], [u8; 32]) {
+pub fn generate_pubkey(raw_sign: Vec<u8>) -> ([u8; 32], [u8; 32]) {
 
     // Use SHA256 hash function to hash the signature bytes
     let mut hasher = Sha3_256::new();
@@ -49,7 +59,7 @@ mod tests {
 
     #[test]
     fn test_generate_pubkey() {
-        let raw_sign = [0u8; 100];
+        let raw_sign = vec![0u8; 100];
         let (x, y) = generate_pubkey(raw_sign);
         assert_eq!(x.len(), 32);
         assert_eq!(y.len(), 32);
