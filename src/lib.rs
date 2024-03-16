@@ -1,15 +1,9 @@
-// This function should be launchable form SWIFT
-pub fn add_rust(left: i32, right: i32) -> i32 {
-    left + right
+uniffi::include_scaffolding!("example"); // "example" is the name of the .udl file
+
+fn add(a: u32, b: u32) -> u32 {
+    a + b
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::add_rust;
-
-    #[test]
-    fn it_works() {
-        let result = add_rust(2, 2);
-        assert_eq!(result, 4);
-    }
+fn hello() -> String {
+    "This is a hello from the rust library".to_string()
 }
