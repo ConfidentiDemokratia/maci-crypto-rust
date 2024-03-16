@@ -1,5 +1,3 @@
-uniffi::include_scaffolding!("example"); // "example" is the name of the .udl file
-
 use ark_bn254::fr::Fr as Fr_bn254;
 use ark_ff::{BigInt, BigInteger, PrimeField};
 use babyjubjub_ark::{Point, PrivateKey, Signature};
@@ -8,8 +6,10 @@ use dusk_poseidon::PoseidonCipher;
 use poseidon_ark::Poseidon;
 use sha3::{Digest, Sha3_256};
 
-pub fn ext_generate_pubkey(raw_sign: Vec<u8>) -> Vec<u8> {
-    let res = generate_pubkey(raw_sign);
+uniffi::include_scaffolding!("example"); // "example" is the name of the .udl file
+
+pub fn ext_generate_pubkey(signed_bytes: Vec<u8>) -> Vec<u8> {
+    let res = generate_pubkey(signed_bytes);
     let mut result = Vec::new();
     result.extend_from_slice(&res.0);
     result.extend_from_slice(&res.1);

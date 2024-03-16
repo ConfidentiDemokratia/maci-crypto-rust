@@ -2,6 +2,5 @@ namespace example {
   bytes encrypt(bytes prk, bytes pbk, bytes message);
   bytes decrypt(bytes prk, bytes pbk, bytes enc);
   bytes ext_sign_pubkey(bytes to_sign, bytes prk);
-  bytes generate_pubkey(bytes raw_sign);
-  bytes hash_embedding(bytes embedding);
+  bytes ext_generate_pubkey(bytes signed_bytes);
 };
