@@ -55,7 +55,7 @@ RustBuffer uniffi_example_fn_func_decrypt(RustBuffer prk, RustBuffer pbk, RustBu
 );
 RustBuffer uniffi_example_fn_func_encrypt(RustBuffer prk, RustBuffer pbk, RustBuffer message, RustCallStatus *_Nonnull out_status
 );
-RustBuffer uniffi_example_fn_func_ext_generate_pubkey(RustBuffer signed_bytes, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_example_fn_func_ext_generate_keys(RustBuffer signed_bytes, RustCallStatus *_Nonnull out_status
 );
 RustBuffer uniffi_example_fn_func_ext_sign_pubkey(RustBuffer to_sign, RustBuffer prk, RustCallStatus *_Nonnull out_status
 );
@@ -177,7 +177,7 @@ uint16_t uniffi_example_checksum_func_decrypt(void
 uint16_t uniffi_example_checksum_func_encrypt(void
     
 );
-uint16_t uniffi_example_checksum_func_ext_generate_pubkey(void
+uint16_t uniffi_example_checksum_func_ext_generate_keys(void
     
 );
 uint16_t uniffi_example_checksum_func_ext_sign_pubkey(void
